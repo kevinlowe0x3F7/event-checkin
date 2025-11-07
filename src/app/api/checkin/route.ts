@@ -1,14 +1,15 @@
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { db } from "../../../server/db";
 import { attendees } from "../../../server/db/schema";
 import { eq } from "drizzle-orm";
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body = (await request.json()) as { attendeeId?: string; eventId?: string };
     const { attendeeId, eventId } = body;
 
-    if (!attendeeId || !eventId) {
+    if (!attendeeId || !eventId || typeof attendeeId !== "string" || typeof eventId !== "string") {
       return NextResponse.json(
         { error: "Attendee ID and Event ID are required" },
         { status: 400 }

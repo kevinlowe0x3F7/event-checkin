@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { db } from "../../../../../server/db";
 import { attendees, events } from "../../../../../server/db/schema";
 import { eq } from "drizzle-orm";
@@ -73,18 +74,18 @@ export default async function AttendeePage({
           )}
 
           <div className="flex gap-4 pt-4">
-            <a
+            <Link
               href={`/events/${event.id}`}
               className="flex-1 rounded-lg bg-white/10 px-6 py-3 text-center font-semibold text-white transition-colors hover:bg-white/20"
             >
               View Event
-            </a>
-            <a
+            </Link>
+            <Link
               href="/events"
               className="flex-1 rounded-lg bg-white/10 px-6 py-3 text-center font-semibold text-white transition-colors hover:bg-white/20"
             >
               All Events
-            </a>
+            </Link>
           </div>
         </div>
       </div>

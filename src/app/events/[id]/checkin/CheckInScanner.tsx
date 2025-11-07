@@ -45,28 +45,30 @@ export default function CheckInScanner({
           fps: 10,
           qrbox: { width: 250, height: 250 },
         },
-        async (decodedText) => {
+        (decodedText) => {
           // Stop scanning when we get a result
-          await html5QrCode.stop();
-          setScanning(false);
+          void html5QrCode.stop().then(() => {
+            setScanning(false);
 
-          // Parse the URL to extract attendeeId
-          try {
-            const url = new URL(decodedText);
-            const attendeeId = url.searchParams.get("attendeeId");
+            // Parse the URL to extract attendeeId
+            try {
+              const url = new URL(decodedText);
+              const attendeeId = url.searchParams.get("attendeeId");
 
-            if (!attendeeId) {
-              setError("Invalid QR code: No attendee ID found");
-              return;
+              if (!attendeeId) {
+                setError("Invalid QR code: No attendee ID found");
+                return;
+              }
+
+              // Call the check-in action
+              void checkInAction(attendeeId, eventId).then((checkInResult) => {
+                setResult(checkInResult);
+              });
+            } catch (e) {
+              setError("Invalid QR code format");
+              console.error(e);
             }
-
-            // Call the check-in action
-            const checkInResult = await checkInAction(attendeeId, eventId);
-            setResult(checkInResult);
-          } catch (e) {
-            setError("Invalid QR code format");
-            console.error(e);
-          }
+          });
         },
         (errorMessage) => {
           // Ignore scanning errors (they happen constantly while searching)
@@ -144,7 +146,7 @@ export default function CheckInScanner({
             <button
               onClick={() => {
                 setError(null);
-                startScanner();
+                void startScanner();
               }}
               className="mt-4 rounded-lg bg-white px-6 py-2 font-semibold text-purple-700 transition-colors hover:bg-gray-100"
             >
@@ -201,7 +203,7 @@ export default function CheckInScanner({
             <button
               onClick={() => {
                 setResult(null);
-                startScanner();
+                void startScanner();
               }}
               className="mt-4 rounded-lg bg-white px-6 py-3 font-semibold text-purple-700 transition-colors hover:bg-gray-100"
             >
@@ -214,10 +216,10 @@ export default function CheckInScanner({
       <div className="rounded-lg bg-white/10 p-4 text-sm text-white/80">
         <h3 className="mb-2 font-semibold">Instructions:</h3>
         <ol className="list-inside list-decimal space-y-1">
-          <li>Click "Start Scanner" to activate your camera</li>
-          <li>Point your camera at an attendee's QR code</li>
+          <li>Click &ldquo;Start Scanner&rdquo; to activate your camera</li>
+          <li>Point your camera at an attendee&apos;s QR code</li>
           <li>The system will automatically check them in</li>
-          <li>Scan the next attendee's QR code to continue</li>
+          <li>Scan the next attendee&apos;s QR code to continue</li>
         </ol>
       </div>
     </div>
