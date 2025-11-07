@@ -1,29 +1,32 @@
-# Create T3 App
+# Event check in
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+## Day 1
+### Pre feature implementation tasks
+- [ ] Setup Clerk
+- [ ] Create file structure for vanilla Nextjs implementation
+- [ ] Create database schema
+- [ ] Setup drizzle
+- [ ] Push schema to database
+- [ ] Update root layout
+- [ ] Create simple homepage
+- [ ] Add tailwind utilities
 
-## What's next? How do I make an app with this?
+### Events CRUD
+- [ ] app/events/page.tsx (list - Server Component)
+- [ ] app/events/new/page.tsx (create - Server Action)
+- [ ] Test: Create and view events
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+### Event Details & Registration  
+- [ ] app/events/[id]/page.tsx (details)
+- [ ] app/events/[id]/register/page.tsx (registration)
+- [ ] Test: Register for event
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+### QR Ticket
+- [ ] app/events/[eventId]/ticket/[attendeeId]/page.tsx
+- [ ] Test: See QR after registering
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
-
-## Learn More
-
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
-
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
-
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
-
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+### Check-in Dashboard
+- [ ] app/events/[id]/checkin/page.tsx (Client Component with scanner)
+- [ ] app/api/checkin/route.ts (POST endpoint)
+- [ ] app/api/events/[id]/attendees/route.ts (GET endpoint)
+- [ ] Test: Scan QR, see manual refresh needed
