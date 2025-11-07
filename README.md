@@ -11,9 +11,9 @@
 - [x] Create simple homepage
 
 ### Events CRUD
-- [ ] app/events/page.tsx (list - Server Component)
-- [ ] app/events/new/page.tsx (create - Server Action)
-- [ ] Test: Create and view events
+- [x] app/events/page.tsx (list - Server Component)
+- [x] app/events/new/page.tsx (create - Server Action)
+- [x] Test: Create and view events
 
 ### Event Details & Registration  
 - [ ] app/events/[id]/page.tsx (details)
