@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { db } from "../../../../../server/db";
 import { attendees, events } from "../../../../../server/db/schema";
 import { eq } from "drizzle-orm";
@@ -29,7 +28,9 @@ export default async function AttendeePage({
   }
 
   // Generate the check-in URL that the QR code will encode
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
+  const baseUrl = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000";
   const checkInUrl = `${baseUrl}/events/${event.id}/checkin?attendeeId=${attendee.id}`;
 
   return (
@@ -74,18 +75,18 @@ export default async function AttendeePage({
           )}
 
           <div className="flex gap-4 pt-4">
-            <Link
+            <a
               href={`/events/${event.id}`}
               className="flex-1 rounded-lg bg-white/10 px-6 py-3 text-center font-semibold text-white transition-colors hover:bg-white/20"
             >
               View Event
-            </Link>
-            <Link
+            </a>
+            <a
               href="/events"
               className="flex-1 rounded-lg bg-white/10 px-6 py-3 text-center font-semibold text-white transition-colors hover:bg-white/20"
             >
               All Events
-            </Link>
+            </a>
           </div>
         </div>
       </div>
