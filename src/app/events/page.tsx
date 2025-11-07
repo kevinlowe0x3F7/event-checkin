@@ -12,13 +12,19 @@ export default async function EventsPage() {
       <h1 className="mb-8 text-4xl font-bold">Events</h1>
       <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {events.map((event) => (
-          <li key={event.id} className="rounded-lg bg-white p-4 shadow-md">
+          <Link
+            href={`/events/${event.id}`}
+            key={event.id}
+            className="rounded-lg bg-white p-4 shadow-md hover:bg-gray-100"
+          >
             <h2 className="text-lg font-bold text-gray-800">{event.name}</h2>
             <p className="text-sm text-gray-500">
               {event.date.toLocaleDateString()}
             </p>
-            <p className="text-sm text-gray-500">{event.capacity} attendees</p>
-          </li>
+            <p className="text-sm text-gray-500">
+              {event.capacity} available spots
+            </p>
+          </Link>
         ))}
       </ul>
     </div>
