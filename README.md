@@ -2,8 +2,8 @@
 
 ## Day 1
 ### Pre feature implementation tasks
-- [ ] Install spec MCP workflow
-- [ ] Setup Clerk
+- [x] Install spec MCP workflow
+- [x] Setup Clerk
 - [ ] Create file structure for vanilla Nextjs implementation
 - [ ] Create database schema
 - [ ] Setup drizzle
