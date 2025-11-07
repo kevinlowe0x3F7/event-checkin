@@ -4,13 +4,11 @@
 ### Pre feature implementation tasks
 - [x] Install spec MCP workflow
 - [x] Setup Clerk
-- [ ] Create file structure for vanilla Nextjs implementation
-- [ ] Create database schema
-- [ ] Setup drizzle
+- [x] Create database schema
+- [x] Setup drizzle
 - [ ] Push schema to database
-- [ ] Update root layout
-- [ ] Create simple homepage
-- [ ] Add tailwind utilities
+- [x] Update root layout
+- [x] Create simple homepage
 
 ### Events CRUD
 - [ ] app/events/page.tsx (list - Server Component)
