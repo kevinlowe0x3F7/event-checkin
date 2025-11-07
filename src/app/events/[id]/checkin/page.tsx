@@ -14,6 +14,8 @@ async function checkInAttendee(attendeeId: string, eventId: string) {
       where: and(eq(attendees.id, attendeeId), eq(attendees.eventId, eventId)),
     });
 
+    console.log("Attendee during check in: ", attendee);
+
     if (!attendee) {
       return { success: false, error: "Attendee not found" };
     }
@@ -78,6 +80,8 @@ export default async function CheckInPage({
   // If attendeeId is provided in URL (from QR code scan), auto check-in
   if (attendeeId) {
     const result = await checkInAttendee(attendeeId, id);
+
+    console.log("result:", result);
 
     if (result.success && result.attendee) {
       return (
