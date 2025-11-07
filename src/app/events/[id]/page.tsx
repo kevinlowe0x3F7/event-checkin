@@ -30,37 +30,89 @@ export default async function EventPage({
       <p className="text-sm">Capacity: {event.capacity} attendees</p>
       <p className="text-sm">Attendees: {attenders.length}</p>
 
-      <div className="flex gap-4 mt-4 mb-8">
+      <div className="mt-4 mb-8 flex gap-4">
         <Link
           href={`/events/${event.id}/register`}
-          className="rounded-lg bg-white px-6 py-3 text-purple-700 font-semibold hover:bg-gray-100 transition-colors"
+          className="rounded-lg bg-white px-6 py-3 font-semibold text-purple-700 transition-colors hover:bg-gray-100"
         >
           Register for Event
         </Link>
         <Link
           href={`/events/${event.id}/checkin`}
-          className="rounded-lg bg-green-500 px-6 py-3 text-white font-semibold hover:bg-green-600 transition-colors"
+          className="rounded-lg bg-green-500 px-6 py-3 font-semibold text-white transition-colors hover:bg-green-600"
         >
           Check-In Scanner
         </Link>
       </div>
 
-      <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {attenders.map((attender) => (
-          <li key={attender.id}>
-            <p className="text-sm">Name: {attender.name}</p>
-            <p className="text-sm">Email: {attender.email}</p>
-            <p className="text-sm">
-              Checked In: {attender.checkedIn ? "Yes" : "No"}
-            </p>
-            {attender.checkedInAt && (
-              <p className="text-sm">
-                Checked In At: {attender.checkedInAt.toLocaleString()}
-              </p>
-            )}
-          </li>
-        ))}
-      </ul>
+      {attenders.length > 0 ? (
+        <div className="w-full max-w-6xl overflow-x-auto">
+          <table className="w-full rounded-lg bg-white/10 backdrop-blur-sm">
+            <thead>
+              <tr className="border-b border-white/20">
+                <th className="px-6 py-3 text-left text-sm font-semibold">
+                  Name
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-semibold">
+                  Email
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-semibold">
+                  Checked In
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-semibold">
+                  Checked In At
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {attenders.map((attender) => (
+                <tr key={attender.id} className="border-b border-white/10">
+                  <td className="px-6 py-4 text-sm">
+                    <Link
+                      href={`/events/${event.id}/attendee/${attender.id}`}
+                      className="block hover:text-purple-300 transition-colors"
+                    >
+                      {attender.name}
+                    </Link>
+                  </td>
+                  <td className="px-6 py-4 text-sm">
+                    <Link
+                      href={`/events/${event.id}/attendee/${attender.id}`}
+                      className="block hover:text-purple-300 transition-colors"
+                    >
+                      {attender.email}
+                    </Link>
+                  </td>
+                  <td className="px-6 py-4 text-sm">
+                    <Link
+                      href={`/events/${event.id}/attendee/${attender.id}`}
+                      className="block hover:text-purple-300 transition-colors"
+                    >
+                      {attender.checkedIn ? (
+                        <span className="text-green-300">✓ Yes</span>
+                      ) : (
+                        <span className="text-yellow-300">✗ No</span>
+                      )}
+                    </Link>
+                  </td>
+                  <td className="px-6 py-4 text-sm">
+                    <Link
+                      href={`/events/${event.id}/attendee/${attender.id}`}
+                      className="block hover:text-purple-300 transition-colors"
+                    >
+                      {attender.checkedInAt
+                        ? new Date(attender.checkedInAt).toLocaleString()
+                        : "-"}
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p className="mt-8 text-white/60">No attendees registered yet.</p>
+      )}
     </div>
   );
 }

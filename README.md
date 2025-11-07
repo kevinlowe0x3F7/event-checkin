@@ -1,6 +1,6 @@
 # Event check in
 
-## Day 1
+## V1: Server actions + server components
 ### Pre feature implementation tasks
 - [x] Install spec MCP workflow
 - [x] Setup Clerk
@@ -16,16 +16,20 @@
 - [x] Test: Create and view events
 
 ### Event Details & Registration  
-- [ ] app/events/[id]/page.tsx (details)
-- [ ] app/events/[id]/register/page.tsx (registration)
+- [x] app/events/[id]/page.tsx (details)
+- [x] app/events/[id]/register/page.tsx (registration)
 - [ ] Test: Register for event
 
 ### QR Ticket
-- [ ] app/events/[eventId]/ticket/[attendeeId]/page.tsx
-- [ ] Test: See QR after registering
+- [x] app/events/[eventId]/ticket/[attendeeId]/page.tsx
+- [x] Test: See QR after registering
 
 ### Check-in Dashboard
-- [ ] app/events/[id]/checkin/page.tsx (Client Component with scanner)
-- [ ] app/api/checkin/route.ts (POST endpoint)
-- [ ] app/api/events/[id]/attendees/route.ts (GET endpoint)
-- [ ] Test: Scan QR, see manual refresh needed
+- [x] app/events/[id]/checkin/page.tsx (Client Component with scanner)
+- [x] app/api/checkin/route.ts (POST endpoint)
+- [x] app/api/events/[id]/attendees/route.ts (GET endpoint)
+- [x] Test: Scan QR, see manual refresh needed
+
+# Learnings
+
+## Server actions + server components

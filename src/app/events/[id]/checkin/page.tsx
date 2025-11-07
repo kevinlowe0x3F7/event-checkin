@@ -3,7 +3,6 @@ import { db } from "../../../../server/db";
 import { attendees, events } from "../../../../server/db/schema";
 import { eq, and } from "drizzle-orm";
 import CheckInScanner from "./CheckInScanner";
-import { revalidatePath } from "next/cache";
 
 async function checkInAttendee(attendeeId: string, eventId: string) {
   "use server";
@@ -41,9 +40,6 @@ async function checkInAttendee(attendeeId: string, eventId: string) {
         checkedInAt: new Date(),
       })
       .where(eq(attendees.id, attendeeId));
-
-    revalidatePath(`/events/${eventId}`);
-    revalidatePath(`/events/${eventId}/attendee/${attendeeId}`);
 
     return {
       success: true,
