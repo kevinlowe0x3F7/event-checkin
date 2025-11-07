@@ -30,6 +30,9 @@
 - [x] app/api/events/[id]/attendees/route.ts (GET endpoint)
 - [x] Test: Scan QR, see manual refresh needed
 
+Commit hash of finished V1: a2b1cbb7f02a176fef2a5008a954e57c55381547
+State of code at finished V1: https://github.com/kevinlowe0x3F7/event-checkin/tree/a2b1cbb7f02a176fef2a5008a954e57c55381547
+
 ## V2: tRPC
 
 ## V3: Convex
