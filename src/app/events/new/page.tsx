@@ -1,19 +1,22 @@
-import { db } from "~/server/db";
-import { events } from "../../../server/db/schema";
 import { redirect } from "next/navigation";
+import { createCaller } from "~/server/api/root";
+import { createInnerTRPCContext } from "~/server/api/trpc";
 
 export default async function NewEventPage() {
   async function createEvent(formData: FormData) {
     "use server";
-    const name = formData.get("name");
-    const date = formData.get("date");
-    const capacity = formData.get("capacity");
+    const name = formData.get("name") as string;
+    const date = formData.get("date") as string;
+    const capacity = formData.get("capacity") as string;
 
-    await db.insert(events).values({
-      name: name as string,
-      date: new Date(date as string),
-      capacity: parseInt(capacity as string),
+    // Use tRPC mutation instead of direct DB access
+    const trpc = createCaller(await createInnerTRPCContext());
+    await trpc.events.create({
+      name,
+      date: new Date(date),
+      capacity: parseInt(capacity),
     });
+
     redirect("/events");
   }
 

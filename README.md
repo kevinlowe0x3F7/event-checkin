@@ -34,6 +34,11 @@ Commit hash of finished V1: a2b1cbb7f02a176fef2a5008a954e57c55381547
 State of code at finished V1: https://github.com/kevinlowe0x3F7/event-checkin/tree/a2b1cbb7f02a176fef2a5008a954e57c55381547
 
 ## V2: tRPC
+- [x] Setup root router and infra (e.g. adding db to the tRPC context)
+- [x] Setup the three necessary routers (attendeesRouter, eventRouter, checkInRouter)
+- [x] Add the query and mutation procedures for each of them (effectively adding a bunch of endpoints)
+- [x] Replace the db inserts in the server action calls with the tRPC mutation instead
+- [x] Replace all the server component db loads with the tRPC calls (note that this will still be server components)
 
 ## V3: Convex
 
@@ -52,3 +57,11 @@ State of code at finished V1: https://github.com/kevinlowe0x3F7/event-checkin/tr
 7. Type safety gaps between the DB schema and actions
 
 Clearly a lot of potential problems in the future. The next step will be to use tRPC to address some of these.
+
+## V2: tRPC (what can be improved still)
+
+One thing we have made much better is the type safety across the entire app. For example, if I were to go ahead and add an extra field to the Events schema that I return in all my APIs, the frontend automatically gets those updated.
+
+1. Still need to manually refresh pages whenever the server gets updated
+2. Still race conditions when two staff members check in at the same time
+

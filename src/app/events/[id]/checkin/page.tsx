@@ -1,59 +1,24 @@
 import { redirect } from "next/navigation";
-import { db } from "../../../../server/db";
-import { attendees, events } from "../../../../server/db/schema";
-import { eq, and } from "drizzle-orm";
+import { createCaller } from "~/server/api/root";
+import { createInnerTRPCContext } from "~/server/api/trpc";
 import CheckInScanner from "./CheckInScanner";
 
 async function checkInAttendee(attendeeId: string, eventId: string) {
   "use server";
 
-  try {
-    // Find the attendee
-    const attendee = await db.query.attendees.findFirst({
-      where: and(eq(attendees.id, attendeeId), eq(attendees.eventId, eventId)),
-    });
+  // Use tRPC mutation instead of direct DB access
+  const trpc = createCaller(await createInnerTRPCContext());
+  const result = await trpc.checkin.checkIn({
+    attendeeId,
+    eventId,
+  });
 
-    console.log("Attendee during check in: ", attendee);
-
-    if (!attendee) {
-      return { success: false, error: "Attendee not found" };
-    }
-
-    // Check if already checked in
-    if (attendee.checkedIn) {
-      return {
-        success: true,
-        alreadyCheckedIn: true,
-        attendee: {
-          name: attendee.name,
-          email: attendee.email,
-          checkedInAt: attendee.checkedInAt,
-        },
-      };
-    }
-
-    // Update check-in status
-    await db
-      .update(attendees)
-      .set({
-        checkedIn: true,
-        checkedInAt: new Date(),
-      })
-      .where(eq(attendees.id, attendeeId));
-
-    return {
-      success: true,
-      alreadyCheckedIn: false,
-      attendee: {
-        name: attendee.name,
-        email: attendee.email,
-      },
-    };
-  } catch (error) {
-    console.error("Check-in error:", error);
-    return { success: false, error: "Failed to check in" };
-  }
+  return result;
 }
+
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 
 export default async function CheckInPage({
   params,
@@ -65,9 +30,9 @@ export default async function CheckInPage({
   const { id } = await params;
   const { attendeeId } = await searchParams;
 
-  const event = await db.query.events.findFirst({
-    where: eq(events.id, id),
-  });
+  // Use tRPC query to get event
+  const trpc = createCaller(await createInnerTRPCContext());
+  const event = await trpc.events.getEventWithAttendees({ eventId: id });
 
   if (!event) {
     redirect("/events");
@@ -79,7 +44,7 @@ export default async function CheckInPage({
 
     console.log("result:", result);
 
-    if (result.success && result.attendee) {
+    if (result.success) {
       return (
         <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#6d28d9] to-[#3730a3] p-4 text-white">
           <div className="w-full max-w-md rounded-lg bg-white/10 p-8 text-center backdrop-blur-sm">

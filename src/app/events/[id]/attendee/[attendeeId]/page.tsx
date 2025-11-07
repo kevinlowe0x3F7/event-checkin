@@ -1,9 +1,12 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { db } from "../../../../../server/db";
-import { attendees, events } from "../../../../../server/db/schema";
-import { eq } from "drizzle-orm";
+import { createCaller } from "~/server/api/root";
+import { createInnerTRPCContext } from "~/server/api/trpc";
 import QRCodeDisplay from "./QRCodeDisplay";
+
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 
 export default async function AttendeePage({
   params,
@@ -12,17 +15,16 @@ export default async function AttendeePage({
 }) {
   const { id, attendeeId } = await params;
 
-  const attendee = await db.query.attendees.findFirst({
-    where: eq(attendees.id, attendeeId),
-  });
+  // Use tRPC queries instead of direct DB access
+  const trpc = createCaller(await createInnerTRPCContext());
+
+  const attendee = await trpc.attendees.getById({ attendeeId });
 
   if (attendee?.eventId !== id) {
     redirect("/events");
   }
 
-  const event = await db.query.events.findFirst({
-    where: eq(events.id, id),
-  });
+  const event = await trpc.events.getEventWithAttendees({ eventId: id });
 
   if (!event) {
     redirect("/events");
