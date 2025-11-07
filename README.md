@@ -6,7 +6,7 @@
 - [x] Setup Clerk
 - [x] Create database schema
 - [x] Setup drizzle
-- [ ] Push schema to database
+- [x] Push schema to database
 - [x] Update root layout
 - [x] Create simple homepage
 
