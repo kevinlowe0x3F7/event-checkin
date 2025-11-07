@@ -1,26 +1,28 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { db } from "../../../server/db";
-import { attendees, events } from "../../../server/db/schema";
-import { eq } from "drizzle-orm";
+import { createCaller } from "~/server/api/root";
+import { createInnerTRPCContext } from "~/server/api/trpc";
 
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 export default async function EventPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const event = await db.query.events.findFirst({
-    where: eq(events.id, id),
-  });
+
+  // Create tRPC caller and fetch event with attendees
+  const trpc = createCaller(await createInnerTRPCContext());
+  const event = await trpc.events.getEventWithAttendees({ eventId: id });
 
   if (!event) {
     redirect("/events");
   }
 
-  const attenders = await db.query.attendees.findMany({
-    where: eq(attendees.eventId, event.id),
-  });
+  const attenders = event.attendees;
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#6d28d9] to-[#3730a3] text-white">

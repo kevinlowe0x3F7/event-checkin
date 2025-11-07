@@ -1,8 +1,11 @@
 import { redirect } from "next/navigation";
-import { db } from "../../../../server/db";
-import { attendees, events } from "../../../../server/db/schema";
-import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { createCaller } from "~/server/api/root";
+import { createInnerTRPCContext } from "~/server/api/trpc";
+
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 
 async function registerAttendee(formData: FormData) {
   "use server";
@@ -11,27 +14,16 @@ async function registerAttendee(formData: FormData) {
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
 
-  if (!name || !email || !eventId) {
-    throw new Error("Name and email are required");
-  }
-
-  // Generate a unique attendee ID
-  const attendeeId = crypto.randomUUID();
-
-  // Create QR code data that contains attendee and event info
-  const qrCode = attendeeId;
-
-  await db.insert(attendees).values({
-    id: attendeeId,
+  // Use tRPC mutation instead of direct DB access
+  const trpc = createCaller(await createInnerTRPCContext());
+  const newAttendee = await trpc.attendees.register({
+    eventId,
     name,
     email,
-    eventId,
-    qrCode,
-    checkedIn: false,
   });
 
   revalidatePath(`/events/${eventId}`);
-  redirect(`/events/${eventId}/attendee/${attendeeId}`);
+  redirect(`/events/${eventId}/attendee/${newAttendee!.id}`);
 }
 
 export default async function EventRegistrationPage({
@@ -40,19 +32,16 @@ export default async function EventRegistrationPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const event = await db.query.events.findFirst({
-    where: eq(events.id, id),
-  });
+
+  // Use tRPC query instead of direct DB access
+  const trpc = createCaller(await createInnerTRPCContext());
+  const event = await trpc.events.getEventWithAttendees({ eventId: id });
 
   if (!event) {
     redirect("/events");
   }
 
-  const attenders = await db.query.attendees.findMany({
-    where: eq(attendees.eventId, event.id),
-  });
-
-  const isFull = attenders.length >= event.capacity;
+  const isFull = event.attendees.length >= event.capacity;
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#6d28d9] to-[#3730a3] text-white">
@@ -60,7 +49,7 @@ export default async function EventRegistrationPage({
         <h1 className="mb-2 text-3xl font-bold text-center">Register for Event</h1>
         <h2 className="mb-6 text-xl text-center">{event.name}</h2>
         <p className="mb-6 text-center text-sm">
-          {attenders.length} / {event.capacity} attendees registered
+          {event.attendees.length} / {event.capacity} attendees registered
         </p>
 
         {isFull ? (
