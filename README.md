@@ -75,30 +75,30 @@ Diff: https://github.com/kevinlowe0x3F7/event-checkin/pull/1
   - `convex/events.ts`: allEvents, getEventWithAttendees
   - `convex/attendees.ts`: getById, register
   - `convex/checkin.ts`: checkIn
-- [ ] Remove tRPC routers (no longer needed - Convex replaces tRPC)
-- [ ] Remove Drizzle ORM and PostgreSQL setup
+- [x] Remove tRPC routers (no longer needed - Convex replaces tRPC)
+- [x] Remove Drizzle ORM and PostgreSQL setup
 
 ### Convert to Client Components with Real-Time Updates
-- [ ] Setup ConvexClientProvider in root layout
-- [ ] Convert all pages to client components using Convex hooks:
+- [x] Setup ConvexClientProvider in root layout
+- [x] Convert all pages to client components using Convex hooks:
   - `/events/page.tsx` - Use `useQuery(api.events.allEvents)` for real-time event list
   - `/events/[id]/page.tsx` - Use `useQuery(api.events.getEventWithAttendees)` for real-time attendee list
   - `/events/[id]/register/page.tsx` - Use `useMutation(api.attendees.register)` for registration
   - `/events/[id]/checkin/page.tsx` - Convert CheckInScanner to use `useQuery()` and `useMutation(api.checkin.checkIn)`
   - `/events/[id]/attendee/[attendeeId]/page.tsx` - Use `useQuery()` for real-time check-in status updates
-- [ ] Replace all server actions with Convex mutations
-- [ ] Remove all `revalidatePath()` calls (no longer needed with real-time subscriptions!)
+- [x] Replace all server actions with Convex mutations
+- [x] Remove all `revalidatePath()` calls (no longer needed with real-time subscriptions!)
 
 ### Remove Old Infrastructure
-- [ ] Remove tRPC setup (`src/server/api/`, `src/trpc/`)
-- [ ] Remove Drizzle schema and migrations
-- [ ] Remove PostgreSQL connection
-- [ ] Update environment variables (remove DATABASE_URL, add CONVEX_DEPLOYMENT)
+- [x] Remove tRPC setup (`src/server/api/`, `src/trpc/`)
+- [x] Remove Drizzle schema and migrations
+- [x] Remove PostgreSQL connection
+- [x] Update environment variables (remove DATABASE_URL, add CONVEX_DEPLOYMENT)
 
 ### Testing & Demo
-- [ ] Test: Create event, register attendees
-- [ ] Test: Check-in flow works
-- [ ] Magic demo: Scan QR from attendee's device, see that attendee's device, event details table, and scanner all update automatically in real-time across all devices
+- [x] Test: Create event, register attendees
+- [x] Test: Check-in flow works
+- [x] Magic demo: Scan QR from attendee's device, see that attendee's device, event details table, and scanner all update automatically in real-time across all devices
 
 # Learnings
 
@@ -121,4 +121,12 @@ Note that this was not a large change, because this is a net improvement on what
 
 1. Still need to manually refresh pages whenever the server gets updated
 2. Still race conditions when two staff members check in at the same time
+
+## V3: Convex
+
+Convex is so cool. I also now understand that server components may not be all that great, especially if we have to wrap them in so much complexity where they differ. Especially for an application that requires a lot of user interactions, it's not super feasible to have a lot of server components. The interactivity necessitates client components, which do just fine in terms of performance. Server components are better suited for more static pages.
+
+But Convex as an application database is so sweet because it acts as the single source of truth for the data everywhere. The DevX has also been great, in having dev deployments, production deployments. I didn't use preview deployments, but it would be something we would 100% have in the future.
+
+The migration from Postgres to Convex also isn't too bad. At least for the copy the data over version where there is downtime.
 
