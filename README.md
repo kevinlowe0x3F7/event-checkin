@@ -1,5 +1,9 @@
 # Event check in
 
+# Demo (Convex version)
+
+https://github.com/user-attachments/assets/8f00fbb5-a1cf-493a-a548-82c4b3ea90ad
+
 ## V1: Server actions + server components
 ### Pre feature implementation tasks
 - [x] Install spec MCP workflow
@@ -129,8 +133,4 @@ Convex is so cool. I also now understand that server components may not be all t
 But Convex as an application database is so sweet because it acts as the single source of truth for the data everywhere. The DevX has also been great, in having dev deployments, production deployments. I didn't use preview deployments, but it would be something we would 100% have in the future.
 
 The migration from Postgres to Convex also isn't too bad. At least for the copy the data over version where there is downtime.
-
-# Convex Demo
-
-https://github.com/user-attachments/assets/8f00fbb5-a1cf-493a-a548-82c4b3ea90ad
 
