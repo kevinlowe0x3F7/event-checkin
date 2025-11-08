@@ -5,7 +5,7 @@ export default function HomePage() {
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#6d28d9] to-[#3730a3] text-white">
       <div className="container flex flex-col items-center justify-center gap-6 px-4 py-16">
         <h1 className="mb-8 text-4xl font-bold">Event Check-in System</h1>
-        <p className="mb-4">Version 2: tRPC</p>
+        <p className="mb-4">Version 3: Convex</p>
 
         <div className="grid grid-cols-1 gap-6">
           <Link

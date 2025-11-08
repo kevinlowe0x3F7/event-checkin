@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Html5Qrcode } from "html5-qrcode";
+import type { Id } from "../../../../../convex/_generated/dataModel";
 
 interface CheckInResult {
   success: boolean;
@@ -9,20 +10,17 @@ interface CheckInResult {
   attendee?: {
     name: string;
     email: string;
-    checkedInAt?: Date | null;
+    checkedInAt?: number | null;
   };
   error?: string;
 }
 
 export default function CheckInScanner({
-  eventId,
-  checkInAction,
+  checkInMutation,
 }: {
-  eventId: string;
-  checkInAction: (
-    attendeeId: string,
-    eventId: string,
-  ) => Promise<CheckInResult>;
+  checkInMutation: (args: {
+    attendeeId: Id<"attendees">;
+  }) => Promise<CheckInResult>;
 }) {
   const [scanning, setScanning] = useState(false);
   const [result, setResult] = useState<CheckInResult | null>(null);
@@ -60,8 +58,10 @@ export default function CheckInScanner({
                 return;
               }
 
-              // Call the check-in action
-              void checkInAction(attendeeId, eventId).then((checkInResult) => {
+              // Call the check-in mutation
+              void checkInMutation({
+                attendeeId: attendeeId as Id<"attendees">,
+              }).then((checkInResult: CheckInResult) => {
                 setResult(checkInResult);
               });
             } catch (e) {

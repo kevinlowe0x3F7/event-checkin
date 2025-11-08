@@ -3,7 +3,7 @@
  */
 
 import { z } from "zod";
-import { eq, and, count } from "drizzle-orm";
+import { eq, count } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { attendees, events } from "~/server/db/schema";
@@ -20,7 +20,7 @@ export const attendeesRouter = createTRPCRouter({
         eventId: z.string().uuid(),
         name: z.string().min(1, "Name is required"),
         email: z.string().email("Valid email is required"),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       // Check if event exists

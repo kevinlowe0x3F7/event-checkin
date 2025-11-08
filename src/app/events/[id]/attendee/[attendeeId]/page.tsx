@@ -1,40 +1,49 @@
-import { redirect } from "next/navigation";
+"use client";
+
+import { useQuery } from "convex/react";
 import Link from "next/link";
-import { createCaller } from "~/server/api/root";
-import { createInnerTRPCContext } from "~/server/api/trpc";
+import { useParams, useRouter } from "next/navigation";
+import { api } from "../../../../../../convex/_generated/api";
+import type { Id } from "../../../../../../convex/_generated/dataModel";
 import QRCodeDisplay from "./QRCodeDisplay";
 
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
+export default function AttendeePage() {
+  const params = useParams();
+  const router = useRouter();
+  const id = params.id as string;
+  const attendeeId = params.attendeeId as string;
 
-export default async function AttendeePage({
-  params,
-}: {
-  params: Promise<{ id: string; attendeeId: string }>;
-}) {
-  const { id, attendeeId } = await params;
+  // Use Convex queries for real-time updates
+  const attendee = useQuery(api.attendees.getById, {
+    attendeeId: attendeeId as Id<"attendees">,
+  });
 
-  // Use tRPC queries instead of direct DB access
-  const trpc = createCaller(await createInnerTRPCContext());
+  const event = useQuery(api.events.getEventWithAttendees, {
+    eventId: id as Id<"events">,
+  });
 
-  const attendee = await trpc.attendees.getById({ attendeeId });
-
-  if (attendee?.eventId !== id) {
-    redirect("/events");
+  // Loading state
+  if (attendee === undefined || event === undefined) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-[#6d28d9] to-[#3730a3] text-white">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
   }
 
-  const event = await trpc.events.getEventWithAttendees({ eventId: id });
-
-  if (!event) {
-    redirect("/events");
+  // Not found or mismatch state
+  if (attendee === null || event === null || attendee.eventId !== id) {
+    router.push("/events");
+    return null;
   }
 
   // Generate the check-in URL that the QR code will encode
-  const baseUrl = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "http://localhost:3000";
-  const checkInUrl = `${baseUrl}/events/${event.id}/checkin?attendeeId=${attendee.id}`;
+  const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL
+    ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+    : typeof window !== "undefined"
+      ? window.location.origin
+      : "http://localhost:3000";
+  const checkInUrl = `${baseUrl}/events/${event._id}/checkin?attendeeId=${attendee._id}`;
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#6d28d9] to-[#3730a3] p-4 text-white">
@@ -48,7 +57,7 @@ export default async function AttendeePage({
           <p className="text-sm text-white/80">{attendee.email}</p>
           <p className="mt-4 text-lg font-medium">{event.name}</p>
           <p className="text-sm text-white/80">
-            {event.date.toLocaleDateString()}
+            {new Date(event.date).toLocaleDateString()}
           </p>
         </div>
 
@@ -67,7 +76,7 @@ export default async function AttendeePage({
               <p className="font-semibold text-green-200">✓ Checked In</p>
               {attendee.checkedInAt && (
                 <p className="mt-1 text-sm text-green-300">
-                  {attendee.checkedInAt.toLocaleString()}
+                  {new Date(attendee.checkedInAt).toLocaleString()}
                 </p>
               )}
             </div>
@@ -79,7 +88,7 @@ export default async function AttendeePage({
 
           <div className="flex gap-4 pt-4">
             <Link
-              href={`/events/${event.id}`}
+              href={`/events/${event._id}`}
               className="flex-1 rounded-lg bg-white/10 px-6 py-3 text-center font-semibold text-white transition-colors hover:bg-white/20"
             >
               View Event

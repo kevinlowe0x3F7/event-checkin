@@ -1,25 +1,34 @@
-import { redirect } from "next/navigation";
+"use client";
+
+import { useQuery } from "convex/react";
 import Link from "next/link";
-import { createCaller } from "~/server/api/root";
-import { createInnerTRPCContext } from "~/server/api/trpc";
+import { useParams, useRouter } from "next/navigation";
+import { api } from "../../../../convex/_generated/api";
+import type { Id } from "../../../../convex/_generated/dataModel";
 
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-export default async function EventPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
+export default function EventPage() {
+  const params = useParams();
+  const router = useRouter();
+  const id = params.id as string;
 
-  // Create tRPC caller and fetch event with attendees
-  const trpc = createCaller(await createInnerTRPCContext());
-  const event = await trpc.events.getEventWithAttendees({ eventId: id });
+  // Use Convex query for real-time updates
+  const event = useQuery(api.events.getEventWithAttendees, {
+    eventId: id as Id<"events">,
+  });
 
-  if (!event) {
-    redirect("/events");
+  // Loading state
+  if (event === undefined) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-[#6d28d9] to-[#3730a3] text-white">
+        <div className="text-lg">Loading event...</div>
+      </div>
+    );
+  }
+
+  // Not found state
+  if (event === null) {
+    router.push("/events");
+    return null;
   }
 
   const attenders = event.attendees;
@@ -28,19 +37,21 @@ export default async function EventPage({
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#6d28d9] to-[#3730a3] text-white">
       <h1 className="mb-8 text-4xl font-bold">Event Details</h1>
       <h2 className="text-2xl font-bold">Event: {event.name}</h2>
-      <p className="text-sm">Date: {event.date.toLocaleDateString()}</p>
+      <p className="text-sm">
+        Date: {new Date(event.date).toLocaleDateString()}
+      </p>
       <p className="text-sm">Capacity: {event.capacity} attendees</p>
       <p className="text-sm">Attendees: {attenders.length}</p>
 
       <div className="mt-4 mb-8 flex gap-4">
         <Link
-          href={`/events/${event.id}/register`}
+          href={`/events/${event._id}/register`}
           className="rounded-lg bg-white px-6 py-3 font-semibold text-purple-700 transition-colors hover:bg-gray-100"
         >
           Register for Event
         </Link>
         <Link
-          href={`/events/${event.id}/checkin`}
+          href={`/events/${event._id}/checkin`}
           className="rounded-lg bg-green-500 px-6 py-3 font-semibold text-white transition-colors hover:bg-green-600"
         >
           Check-In Scanner
@@ -68,27 +79,27 @@ export default async function EventPage({
             </thead>
             <tbody>
               {attenders.map((attender) => (
-                <tr key={attender.id} className="border-b border-white/10">
+                <tr key={attender._id} className="border-b border-white/10">
                   <td className="px-6 py-4 text-sm">
                     <Link
-                      href={`/events/${event.id}/attendee/${attender.id}`}
-                      className="block hover:text-purple-300 transition-colors"
+                      href={`/events/${event._id}/attendee/${attender._id}`}
+                      className="block transition-colors hover:text-purple-300"
                     >
                       {attender.name}
                     </Link>
                   </td>
                   <td className="px-6 py-4 text-sm">
                     <Link
-                      href={`/events/${event.id}/attendee/${attender.id}`}
-                      className="block hover:text-purple-300 transition-colors"
+                      href={`/events/${event._id}/attendee/${attender._id}`}
+                      className="block transition-colors hover:text-purple-300"
                     >
                       {attender.email}
                     </Link>
                   </td>
                   <td className="px-6 py-4 text-sm">
                     <Link
-                      href={`/events/${event.id}/attendee/${attender.id}`}
-                      className="block hover:text-purple-300 transition-colors"
+                      href={`/events/${event._id}/attendee/${attender._id}`}
+                      className="block transition-colors hover:text-purple-300"
                     >
                       {attender.checkedIn ? (
                         <span className="text-green-300">✓ Yes</span>
@@ -99,8 +110,8 @@ export default async function EventPage({
                   </td>
                   <td className="px-6 py-4 text-sm">
                     <Link
-                      href={`/events/${event.id}/attendee/${attender.id}`}
-                      className="block hover:text-purple-300 transition-colors"
+                      href={`/events/${event._id}/attendee/${attender._id}`}
+                      className="block transition-colors hover:text-purple-300"
                     >
                       {attender.checkedInAt
                         ? new Date(attender.checkedInAt).toLocaleString()

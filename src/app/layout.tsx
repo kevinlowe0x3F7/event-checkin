@@ -10,7 +10,7 @@ import {
   UserButton,
   ClerkProvider,
 } from "@clerk/nextjs";
-import { TRPCReactProvider } from "~/trpc/react";
+import { ConvexClientProvider } from "./ConvexClientProvider";
 
 export const metadata: Metadata = {
   title: "Event Check-in",
@@ -30,7 +30,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className={`${geist.variable}`}>
         <body>
-          <TRPCReactProvider>
+          <ConvexClientProvider>
             <header className="flex h-16 items-center justify-end gap-4 p-4">
               <SignedOut>
                 <SignInButton />
@@ -45,7 +45,7 @@ export default function RootLayout({
               </SignedIn>
             </header>
             {children}
-          </TRPCReactProvider>
+          </ConvexClientProvider>
         </body>
       </html>
     </ClerkProvider>
